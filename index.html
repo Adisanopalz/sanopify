@@ -3,29 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanopify - Streaming Musik Online</title>
+    <title>Sanopify - Music Experience</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
         body {
             font-family: 'Inter', sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.5s ease;
         }
 
-        .glass-panel {
+        .glass {
             background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .dark .glass-panel {
-            background: rgba(15, 23, 42, 0.8);
+        .light .glass {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        .music-card:hover .play-button {
+        .music-card:hover .play-overlay {
             opacity: 1;
             transform: translateY(0);
         }
@@ -37,20 +39,28 @@
             background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #10b981;
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
         }
 
-        input[type="range"] {
-            accent-color: #10b981;
+        /* Animated Background Mesh */
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 0% 0%, #4f46e5 0%, transparent 50%),
+                        radial-gradient(circle at 100% 0%, #7c3aed 0%, transparent 50%),
+                        radial-gradient(circle at 100% 100%, #db2777 0%, transparent 50%),
+                        radial-gradient(circle at 0% 100%, #2563eb 0%, transparent 50%);
+            opacity: 0.15;
+            filter: blur(80px);
         }
 
-        @keyframes pulse-slow {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.05); opacity: 1; }
-        }
-        .animate-pulse-slow {
-            animation: pulse-slow 3s infinite ease-in-out;
+        .light .mesh-bg {
+            opacity: 0.05;
         }
     </style>
     <script>
@@ -59,383 +69,334 @@
             theme: {
                 extend: {
                     colors: {
-                        spotify: '#1DB954',
-                        darkBg: '#0f172a',
-                        lightBg: '#f8fafc',
+                        primary: '#1DB954',
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-lightBg dark:bg-darkBg text-slate-900 dark:text-slate-100 min-h-screen flex flex-col overflow-hidden">
+<body class="bg-neutral-950 text-white min-h-screen overflow-hidden select-none">
+    <div class="mesh-bg"></div>
 
-    <!-- Wrapper Utama -->
-    <div class="flex flex-1 overflow-hidden relative">
+    <!-- Main Container -->
+    <div class="flex h-screen w-full p-4 gap-4">
         
-        <!-- Sidebar (Desktop) -->
-        <aside class="hidden md:flex flex-col w-64 p-6 border-r border-slate-200 dark:border-slate-800 space-y-8 glass-panel z-10">
-            <div class="flex items-center gap-2 px-2">
-                <div class="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center text-white">
-                    <i data-lucide="music"></i>
+        <!-- Sidebar -->
+        <aside class="hidden md:flex flex-col w-64 glass rounded-3xl p-6 gap-8">
+            <div class="flex items-center gap-3 px-2">
+                <div class="bg-primary p-2 rounded-xl">
+                    <i data-lucide="music-4" class="text-black w-6 h-6"></i>
                 </div>
-                <h1 class="text-2xl font-bold tracking-tight text-emerald-500">Sanopify</h1>
+                <h1 class="text-2xl font-bold tracking-tight">Sanopify</h1>
             </div>
-
-            <nav class="space-y-1">
-                <button class="w-full flex items-center gap-4 px-4 py-3 rounded-xl bg-emerald-500 text-white transition-all shadow-lg shadow-emerald-500/20">
-                    <i data-lucide="home"></i> Beranda
-                </button>
-                <button class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 transition-all">
-                    <i data-lucide="search"></i> Cari
-                </button>
-                <button class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 transition-all">
-                    <i data-lucide="library"></i> Koleksi Anda
-                </button>
+            
+            <nav class="flex flex-col gap-2">
+                <a href="#" onclick="location.reload()" class="flex items-center gap-4 px-4 py-3 rounded-xl bg-white/10 transition-all">
+                    <i data-lucide="home" class="w-5 h-5"></i> Beranda
+                </a>
+                <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-neutral-400 hover:text-white">
+                    <i data-lucide="search" class="w-5 h-5"></i> Jelajah
+                </a>
+                <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-neutral-400 hover:text-white">
+                    <i data-lucide="library" class="w-5 h-5"></i> Koleksi
+                </a>
             </nav>
 
-            <div class="pt-6 border-t border-slate-200 dark:border-slate-800">
-                <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 px-4 mb-4">Playlist Saya</h3>
-                <div class="space-y-1 custom-scrollbar overflow-y-auto max-h-48">
-                    <button class="w-full text-left px-4 py-2 text-sm hover:text-emerald-500 transition-colors">Chill Vibes</button>
-                    <button class="w-full text-left px-4 py-2 text-sm hover:text-emerald-500 transition-colors">Coding Focus</button>
-                    <button class="w-full text-left px-4 py-2 text-sm hover:text-emerald-500 transition-colors">Semangat Pagi</button>
-                </div>
+            <div class="mt-auto">
+                <button onclick="toggleTheme()" class="flex items-center justify-between w-full px-4 py-3 glass rounded-2xl hover:bg-white/10 transition-all">
+                    <span id="theme-text">Dark Mode</span>
+                    <i id="theme-icon" data-lucide="moon" class="w-5 h-5"></i>
+                </button>
             </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col overflow-hidden relative">
-            
-            <!-- Navbar Atas -->
-            <header class="p-4 md:px-8 md:py-6 flex items-center justify-between z-20">
-                <div class="flex items-center gap-4 flex-1">
-                    <div class="relative w-full max-w-md hidden sm:block">
-                        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                        <input type="text" placeholder="Cari lagu, artis, atau album..." 
-                               class="w-full pl-10 pr-4 py-2 bg-slate-200 dark:bg-slate-800 border-none rounded-full focus:ring-2 focus:ring-emerald-500 outline-none text-sm transition-all">
-                    </div>
-                    <!-- Mobile Logo -->
-                    <div class="md:hidden flex items-center gap-2">
-                        <div class="w-8 h-8 bg-emerald-500 rounded flex items-center justify-center text-white">
-                            <i data-lucide="music" class="w-5 h-5"></i>
-                        </div>
-                        <span class="font-bold text-emerald-500 uppercase">Sanopify</span>
-                    </div>
+        <main class="flex-1 flex flex-col gap-4 overflow-hidden">
+            <header class="glass rounded-3xl p-4 flex items-center justify-between gap-4">
+                <div class="flex-1 max-w-xl relative group">
+                    <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400 group-focus-within:text-primary transition-colors"></i>
+                    <input 
+                        id="search-input"
+                        type="text" 
+                        placeholder="Cari lagu, artis, atau album..." 
+                        class="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all text-sm"
+                    >
                 </div>
-
                 <div class="flex items-center gap-3">
-                    <button id="themeToggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-all">
-                        <i data-lucide="sun" id="sunIcon" class="hidden"></i>
-                        <i data-lucide="moon" id="moonIcon"></i>
-                    </button>
-                    <div class="flex items-center gap-3 pl-3 border-l border-slate-200 dark:border-slate-800">
-                        <span class="text-sm font-medium hidden sm:inline">User Guest</span>
-                        <div class="w-10 h-10 rounded-full bg-emerald-500/20 border-2 border-emerald-500 overflow-hidden">
-                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Avatar">
-                        </div>
-                    </div>
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-blue-500 flex items-center justify-center font-bold">S</div>
                 </div>
             </header>
 
-            <!-- Area Scroll Konten -->
-            <div id="contentScroll" class="flex-1 overflow-y-auto px-4 md:px-8 pb-32 custom-scrollbar">
-                
-                <!-- Hero Section -->
-                <section class="mb-10 mt-4">
-                    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 to-teal-900 p-8 text-white">
-                        <div class="relative z-10">
-                            <span class="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-medium mb-4 backdrop-blur-md">Trending Sekarang</span>
-                            <h2 class="text-3xl md:text-5xl font-bold mb-4 leading-tight">Dengarkan Lagu <br> Favoritmu Dimana Saja</h2>
-                            <p class="text-emerald-100 mb-6 max-w-md">Nikmati jutaan lagu tanpa gangguan iklan dan kualitas suara terbaik di Sanopify.</p>
-                            <button class="bg-white text-emerald-900 px-8 py-3 rounded-full font-bold hover:scale-105 transition-transform">Putar Sekarang</button>
-                        </div>
-                        <i data-lucide="music" class="absolute -right-10 -bottom-10 w-64 h-64 text-white/10 -rotate-12 pointer-events-none"></i>
+            <div id="results-container" class="flex-1 overflow-y-auto custom-scrollbar rounded-3xl">
+                <div class="p-2">
+                    <h2 id="section-title" class="text-2xl font-bold mb-6 px-2">Trending Sekarang</h2>
+                    <div id="song-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                        <!-- Skeleton Loader -->
+                        <div class="animate-pulse glass rounded-2xl p-4 aspect-square"></div>
+                        <div class="animate-pulse glass rounded-2xl p-4 aspect-square"></div>
+                        <div class="animate-pulse glass rounded-2xl p-4 aspect-square"></div>
+                        <div class="animate-pulse glass rounded-2xl p-4 aspect-square"></div>
                     </div>
-                </section>
-
-                <!-- Grid Lagu -->
-                <section class="mb-10">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-xl font-bold">Lagu Terpopuler</h3>
-                        <a href="#" class="text-emerald-500 text-sm font-medium hover:underline">Lihat Semua</a>
-                    </div>
-                    <div id="songsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                        <!-- Card lagu akan dimuat via JS -->
-                    </div>
-                </section>
-
-                <!-- Kategori/Genres -->
-                <section class="mb-10">
-                    <h3 class="text-xl font-bold mb-6">Jelajahi Kategori</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="h-24 md:h-32 rounded-2xl bg-indigo-600 p-4 relative overflow-hidden group cursor-pointer">
-                            <span class="font-bold text-white text-lg">Pop Indo</span>
-                            <div class="absolute -right-2 -bottom-2 w-16 h-16 bg-white/20 rotate-12 group-hover:scale-110 transition-transform"></div>
-                        </div>
-                        <div class="h-24 md:h-32 rounded-2xl bg-orange-500 p-4 relative overflow-hidden group cursor-pointer">
-                            <span class="font-bold text-white text-lg">Jazz Relax</span>
-                            <div class="absolute -right-2 -bottom-2 w-16 h-16 bg-white/20 rotate-12 group-hover:scale-110 transition-transform"></div>
-                        </div>
-                        <div class="h-24 md:h-32 rounded-2xl bg-pink-600 p-4 relative overflow-hidden group cursor-pointer">
-                            <span class="font-bold text-white text-lg">K-Pop Hits</span>
-                            <div class="absolute -right-2 -bottom-2 w-16 h-16 bg-white/20 rotate-12 group-hover:scale-110 transition-transform"></div>
-                        </div>
-                        <div class="h-24 md:h-32 rounded-2xl bg-emerald-600 p-4 relative overflow-hidden group cursor-pointer">
-                            <span class="font-bold text-white text-lg">Lo-fi Hip Hop</span>
-                            <div class="absolute -right-2 -bottom-2 w-16 h-16 bg-white/20 rotate-12 group-hover:scale-110 transition-transform"></div>
-                        </div>
-                    </div>
-                </section>
+                </div>
             </div>
         </main>
     </div>
 
-    <!-- Music Player Bar (Floating/Bottom) -->
-    <div class="fixed bottom-0 left-0 right-0 glass-panel border-t border-slate-200 dark:border-slate-800 p-4 md:px-8 z-50">
-        <div class="max-w-screen-2xl mx-auto grid grid-cols-3 items-center">
-            
-            <!-- Info Lagu -->
-            <div class="flex items-center gap-4 overflow-hidden">
-                <div class="relative group">
-                    <img id="playerImage" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop" 
-                         class="w-12 h-12 md:w-14 md:h-14 rounded-lg object-cover shadow-lg" alt="Now Playing">
-                </div>
-                <div class="flex flex-col truncate">
-                    <span id="playerTitle" class="font-bold text-sm md:text-base truncate">Pilih Lagu...</span>
-                    <span id="playerArtist" class="text-xs text-slate-500 dark:text-slate-400 truncate">Mulai mendengarkan</span>
-                </div>
-                <button class="hidden sm:block hover:text-emerald-500 transition-colors">
-                    <i data-lucide="heart" class="w-5 h-5"></i>
-                </button>
+    <!-- Player Bar -->
+    <div id="player-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] md:w-[80%] max-w-5xl glass rounded-[2.5rem] p-4 flex flex-col md:flex-row items-center gap-4 shadow-2xl transition-all translate-y-48">
+        <div class="flex items-center gap-4 w-full md:w-1/3">
+            <img id="current-cover" src="" alt="" class="w-14 h-14 rounded-xl object-cover bg-white/10">
+            <div class="flex flex-col truncate">
+                <span id="current-title" class="font-bold truncate text-sm">Pilih lagu...</span>
+                <span id="current-artist" class="text-xs text-neutral-400 truncate">Artis</span>
             </div>
+            <button class="ml-auto md:ml-4 text-neutral-400 hover:text-red-500 transition-colors">
+                <i data-lucide="heart" class="w-5 h-5"></i>
+            </button>
+        </div>
 
-            <!-- Kontrol Utama -->
-            <div class="flex flex-col items-center gap-2">
-                <div class="flex items-center gap-4 md:gap-8">
-                    <button class="text-slate-400 hover:text-emerald-500 transition-colors hidden sm:block">
-                        <i data-lucide="shuffle" class="w-4 h-4"></i>
-                    </button>
-                    <button id="prevBtn" class="hover:text-emerald-500 transition-all">
-                        <i data-lucide="skip-back" class="w-6 h-6 fill-current"></i>
-                    </button>
-                    <button id="playPauseBtn" class="w-10 h-10 md:w-12 md:h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-lg shadow-emerald-500/30">
-                        <i data-lucide="play" id="playIcon" class="fill-current"></i>
-                        <i data-lucide="pause" id="pauseIcon" class="hidden fill-current"></i>
-                    </button>
-                    <button id="nextBtn" class="hover:text-emerald-500 transition-all">
-                        <i data-lucide="skip-forward" class="w-6 h-6 fill-current"></i>
-                    </button>
-                    <button class="text-slate-400 hover:text-emerald-500 transition-colors hidden sm:block">
-                        <i data-lucide="repeat" class="w-4 h-4"></i>
-                    </button>
-                </div>
-                <!-- Progress Bar -->
-                <div class="w-full max-w-md flex items-center gap-3 text-[10px] md:text-xs text-slate-400">
-                    <span id="currentTime">0:00</span>
-                    <input type="range" id="progressBar" value="0" step="1" min="0" max="100" class="flex-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 cursor-pointer appearance-none">
-                    <span id="durationTime">0:00</span>
-                </div>
+        <div class="flex flex-col items-center gap-2 w-full md:w-1/3">
+            <div class="flex items-center gap-6">
+                <button class="text-neutral-400 hover:text-white transition-colors"><i data-lucide="shuffle" class="w-4 h-4"></i></button>
+                <button class="text-neutral-200 hover:text-white transition-colors"><i data-lucide="skip-back" class="w-6 h-6"></i></button>
+                <button id="play-btn" class="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform active:scale-95">
+                    <i data-lucide="play" class="w-6 h-6 fill-black"></i>
+                </button>
+                <button class="text-neutral-200 hover:text-white transition-colors"><i data-lucide="skip-forward" class="w-6 h-6"></i></button>
+                <button class="text-neutral-400 hover:text-white transition-colors"><i data-lucide="repeat" class="w-4 h-4"></i></button>
             </div>
+            <div class="flex items-center gap-3 w-full group">
+                <span id="current-time" class="text-[10px] text-neutral-500 w-8 text-right">0:00</span>
+                <div id="progress-container" class="flex-1 h-1.5 bg-white/10 rounded-full relative cursor-pointer overflow-hidden">
+                    <div id="progress-bar" class="absolute top-0 left-0 h-full bg-primary transition-all duration-100" style="width: 0%"></div>
+                </div>
+                <span id="total-duration" class="text-[10px] text-neutral-500 w-8">0:30</span>
+            </div>
+        </div>
 
-            <!-- Kontrol Volume & Tambahan -->
-            <div class="flex items-center justify-end gap-4">
-                <div class="hidden md:flex items-center gap-2 w-32">
-                    <i data-lucide="volume-2" class="w-4 h-4 text-slate-400"></i>
-                    <input type="range" id="volumeBar" value="80" min="0" max="100" class="w-full h-1 bg-slate-200 dark:bg-slate-700 rounded-full cursor-pointer appearance-none">
-                </div>
-                <button class="hover:text-emerald-500 transition-colors hidden sm:block">
-                    <i data-lucide="list-music" class="w-5 h-5"></i>
-                </button>
-                <button class="md:hidden p-2">
-                    <i data-lucide="more-vertical" class="w-5 h-5"></i>
-                </button>
-            </div>
+        <div class="hidden md:flex items-center justify-end gap-3 w-1/3">
+            <i data-lucide="volume-2" class="w-5 h-5 text-neutral-400"></i>
+            <input type="range" class="w-24 accent-primary opacity-50 hover:opacity-100 transition-opacity">
         </div>
     </div>
 
-    <!-- Hidden Audio Player -->
-    <audio id="mainAudio" class="hidden"></audio>
+    <audio id="main-audio"></audio>
 
     <script>
-        // Inisialisasi Lucide Icons
         lucide.createIcons();
-
-        // Data Lagu
-        const musicData = [
-            { id: 1, title: "Electronic Vibe", artist: "Creative Minds", cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=400&h=400&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-            { id: 2, title: "Deep House Forest", artist: "Nature Beats", cover: "https://images.unsplash.com/photo-1459749411177-042180ce673c?w=400&h=400&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-            { id: 3, title: "Lofi Dream", artist: "Chill Master", cover: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=400&h=400&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
-            { id: 4, title: "Rock Energy", artist: "The Thunder", cover: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=400&h=400&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
-            { id: 5, title: "Midnight Jazz", artist: "Blue Note", cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=400&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" },
-            { id: 6, title: "Summer Breeze", artist: "Tropical Kid", cover: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&h=400&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" },
-            { id: 7, title: "Acoustic Morning", artist: "Guitar Hero", cover: "https://images.unsplash.com/photo-1445985543470-41fba5c3144a?w=400&h=400&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3" },
-            { id: 8, title: "Future Bass", artist: "Cyber Punk", cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" }
-        ];
-
-        let currentSongIndex = 0;
+        const audio = document.getElementById('main-audio');
+        const searchInput = document.getElementById('search-input');
+        const songGrid = document.getElementById('song-grid');
+        const playerBar = document.getElementById('player-bar');
+        const playBtn = document.getElementById('play-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const progressContainer = document.getElementById('progress-container');
+        const currentTimeEl = document.getElementById('current-time');
+        const sectionTitle = document.getElementById('section-title');
+        
         let isPlaying = false;
-        let playPromise = null;
+        let currentTrack = null;
 
-        const mainAudio = document.getElementById('mainAudio');
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const playIcon = document.getElementById('playIcon');
-        const pauseIcon = document.getElementById('pauseIcon');
-        const progressBar = document.getElementById('progressBar');
-        const volumeBar = document.getElementById('volumeBar');
-        const currentTimeEl = document.getElementById('currentTime');
-        const durationTimeEl = document.getElementById('durationTime');
+        /**
+         * Robust fetch with retry logic and flexible parsing
+         */
+        async function fetchWithProxy(apiUrl, retries = 5, delay = 1000) {
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
+            
+            try {
+                const response = await fetch(proxyUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP Error: ${response.status}`);
+                }
+                
+                const wrapper = await response.json();
+                if (!wrapper || !wrapper.contents) {
+                    throw new Error('Proxy returned empty content');
+                }
 
-        function loadSong(index) {
-            const song = musicData[index];
-            mainAudio.src = song.url;
-            mainAudio.load(); // Explicitly load the new resource
-            
-            document.getElementById('playerTitle').innerText = song.title;
-            document.getElementById('playerArtist').innerText = song.artist;
-            document.getElementById('playerImage').src = song.cover;
-            
-            renderSongs();
+                // Some proxies return contents as a string, others as an object
+                return typeof wrapper.contents === 'string' 
+                    ? JSON.parse(wrapper.contents) 
+                    : wrapper.contents;
+                    
+            } catch (error) {
+                if (retries > 0) {
+                    // Exponential backoff
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return fetchWithProxy(apiUrl, retries - 1, delay * 2);
+                }
+                throw error;
+            }
         }
 
-        function renderSongs() {
-            const grid = document.getElementById('songsGrid');
-            grid.innerHTML = '';
-            
-            musicData.forEach((song, index) => {
-                const isActive = currentSongIndex === index && isPlaying;
-                const card = document.createElement('div');
-                card.className = `music-card group bg-white dark:bg-slate-800/50 p-4 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer shadow-sm relative overflow-hidden ${isActive ? 'ring-2 ring-emerald-500' : ''}`;
-                card.onclick = () => selectSong(index);
+        async function fetchSongs(query = '') {
+            try {
+                songGrid.innerHTML = `
+                    <div class="col-span-full flex flex-col items-center justify-center py-20 gap-4 opacity-50">
+                        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-primary"></div>
+                        <p>Mencari lagu...</p>
+                    </div>
+                `;
                 
-                card.innerHTML = `
-                    <div class="relative mb-4 aspect-square rounded-xl overflow-hidden shadow-md">
-                        <img src="${song.cover}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="${song.title}">
-                        <div class="play-button absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 transform translate-y-4 transition-all duration-300">
-                            <div class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-xl">
-                                <i data-lucide="${isActive ? 'pause' : 'play'}" class="fill-current w-6 h-6"></i>
+                let data;
+                if (query) {
+                    sectionTitle.innerText = `Hasil untuk "${query}"`;
+                    data = await fetchWithProxy(`https://api.deezer.com/search?q=${encodeURIComponent(query)}`);
+                    renderSongs(data.data || []);
+                } else {
+                    sectionTitle.innerText = "Trending Sekarang";
+                    data = await fetchWithProxy('https://api.deezer.com/chart');
+                    renderSongs(data.tracks?.data || []);
+                }
+            } catch (error) {
+                console.error("Gagal mengambil lagu:", error);
+                songGrid.innerHTML = `
+                    <div class="col-span-full text-center py-20 flex flex-col items-center gap-4">
+                        <i data-lucide="alert-circle" class="w-12 h-12 text-red-500 opacity-50"></i>
+                        <div class="opacity-70">
+                            <p class="font-bold">Koneksi bermasalah</p>
+                            <p class="text-sm opacity-60">Gagal terhubung ke server musik setelah beberapa kali percobaan.</p>
+                        </div>
+                        <button onclick="fetchSongs('${query}')" class="px-8 py-3 bg-primary text-black rounded-full hover:scale-105 transition-all text-sm font-bold shadow-lg shadow-primary/20">
+                            Coba Lagi Sekarang
+                        </button>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+        }
+
+        function renderSongs(songs) {
+            if (!songs || songs.length === 0) {
+                songGrid.innerHTML = `<div class="col-span-full text-center py-20 opacity-50">Lagu tidak ditemukan.</div>`;
+                return;
+            }
+
+            songGrid.innerHTML = songs.map(song => `
+                <div class="music-card group glass rounded-3xl p-4 cursor-pointer transition-all duration-300 hover:bg-white/10 hover:-translate-y-2 border border-transparent hover:border-white/20" 
+                     onclick='handleCardClick(${JSON.stringify(song).replace(/'/g, "&apos;")})'>
+                    <div class="relative aspect-square mb-4 overflow-hidden rounded-2xl shadow-xl bg-white/5">
+                        <img src="${song.album.cover_medium}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/250?text=No+Cover'">
+                        <div class="play-overlay absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 transform translate-y-4 transition-all duration-300">
+                            <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg">
+                                <i data-lucide="play" class="w-6 h-6 fill-white text-white ml-1"></i>
                             </div>
                         </div>
                     </div>
-                    <h4 class="font-bold text-sm truncate mb-1">${song.title}</h4>
-                    <p class="text-xs text-slate-500 truncate">${song.artist}</p>
-                `;
-                grid.appendChild(card);
-            });
+                    <div class="truncate font-bold text-sm">${song.title}</div>
+                    <div class="truncate text-xs text-neutral-400 group-hover:text-neutral-200 transition-colors">${song.artist.name}</div>
+                </div>
+            `).join('');
             lucide.createIcons();
         }
 
-        async function selectSong(index) {
-            if (currentSongIndex === index) {
-                togglePlay();
-            } else {
-                currentSongIndex = index;
-                loadSong(index);
-                await playSong();
-            }
+        function handleCardClick(track) {
+            playTrack(track);
         }
 
-        async function togglePlay() {
-            if (isPlaying) {
-                pauseSong();
-            } else {
-                await playSong();
+        function playTrack(track) {
+            currentTrack = track;
+            
+            if (!track.preview) {
+                console.warn("Preview tidak tersedia untuk lagu ini");
+                return;
             }
+
+            audio.src = track.preview;
+            audio.play().catch(e => console.error("Playback error:", e));
+            
+            playerBar.classList.remove('translate-y-48');
+            
+            document.getElementById('current-title').innerText = track.title;
+            document.getElementById('current-artist').innerText = track.artist.name;
+            document.getElementById('current-cover').src = track.album.cover_medium;
+            
+            isPlaying = true;
+            updatePlayBtn();
         }
 
-        async function playSong() {
-            try {
-                // Ensure any existing play request is handled or audio is paused before starting new
-                if (playPromise !== null) {
-                    await playPromise;
+        function updatePlayBtn() {
+            playBtn.innerHTML = isPlaying 
+                ? `<i data-lucide="pause" class="w-6 h-6 fill-black"></i>` 
+                : `<i data-lucide="play" class="w-6 h-6 fill-black ml-1"></i>`;
+            lucide.createIcons();
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+            
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                document.body.classList.replace('bg-neutral-950', 'bg-neutral-50');
+                document.body.classList.replace('text-white', 'text-neutral-900');
+                text.innerText = "Light Mode";
+                icon.innerHTML = lucide.createIcons({ 'sun': {} });
+            } else {
+                html.classList.add('dark');
+                html.classList.remove('light');
+                document.body.classList.replace('bg-neutral-50', 'bg-neutral-950');
+                document.body.classList.replace('text-neutral-900', 'text-white');
+                text.innerText = "Dark Mode";
+                icon.innerHTML = lucide.createIcons({ 'moon': {} });
+            }
+            lucide.createIcons();
+        }
+
+        playBtn.addEventListener('click', () => {
+            if (!audio.src) return;
+            if (isPlaying) audio.pause();
+            else audio.play();
+            isPlaying = !isPlaying;
+            updatePlayBtn();
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            if (!audio.duration) return;
+            const percent = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = `${percent}%`;
+            
+            const mins = Math.floor(audio.currentTime / 60);
+            const secs = Math.floor(audio.currentTime % 60);
+            currentTimeEl.innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
+        });
+
+        progressContainer.addEventListener('click', (e) => {
+            if (!audio.src) return;
+            const width = progressContainer.clientWidth;
+            const clickX = e.offsetX;
+            audio.currentTime = (clickX / width) * audio.duration;
+        });
+
+        let debounceTimer;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(debounceTimer);
+            const q = e.target.value.trim();
+            
+            debounceTimer = setTimeout(() => {
+                if (q.length > 1) {
+                    fetchSongs(q);
+                } else if (q.length === 0) {
+                    fetchSongs();
                 }
-                
-                playPromise = mainAudio.play();
-                await playPromise;
-                
-                isPlaying = true;
-                playIcon.classList.add('hidden');
-                pauseIcon.classList.remove('hidden');
-                document.getElementById('playerImage').classList.add('animate-pulse-slow');
-                renderSongs();
-            } catch (error) {
-                if (error.name !== "AbortError") {
-                    console.error("Playback Error:", error);
-                }
-                // Silently handle AbortError as it's just an interrupted request
-            } finally {
-                playPromise = null;
-            }
-        }
-
-        function pauseSong() {
-            mainAudio.pause();
-            isPlaying = false;
-            playIcon.classList.remove('hidden');
-            pauseIcon.classList.add('hidden');
-            document.getElementById('playerImage').classList.remove('animate-pulse-slow');
-            renderSongs();
-        }
-
-        function formatTime(seconds) {
-            const min = Math.floor(seconds / 60);
-            const sec = Math.floor(seconds % 60);
-            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
-        }
-
-        playPauseBtn.onclick = togglePlay;
-
-        document.getElementById('nextBtn').onclick = async () => {
-            currentSongIndex = (currentSongIndex + 1) % musicData.length;
-            loadSong(currentSongIndex);
-            await playSong();
-        };
-
-        document.getElementById('prevBtn').onclick = async () => {
-            currentSongIndex = (currentSongIndex - 1 + musicData.length) % musicData.length;
-            loadSong(currentSongIndex);
-            await playSong();
-        };
-
-        mainAudio.ontimeupdate = (e) => {
-            const { duration, currentTime } = e.target;
-            const progressPercent = (currentTime / duration) * 100;
-            progressBar.value = progressPercent || 0;
-            currentTimeEl.innerText = formatTime(currentTime);
-            if (!isNaN(duration)) {
-                durationTimeEl.innerText = formatTime(duration);
-            }
-        };
-
-        progressBar.oninput = (e) => {
-            const time = (e.target.value / 100) * mainAudio.duration;
-            mainAudio.currentTime = time;
-        };
-
-        volumeBar.oninput = (e) => {
-            mainAudio.volume = e.target.value / 100;
-        };
-
-        const themeToggle = document.getElementById('themeToggle');
-        const sunIcon = document.getElementById('sunIcon');
-        const moonIcon = document.getElementById('moonIcon');
-        
-        themeToggle.onclick = () => {
-            document.documentElement.classList.toggle('dark');
-            const isDark = document.documentElement.classList.contains('dark');
-            if(isDark) {
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-            } else {
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
-            }
-        };
+            }, 600);
+        });
 
         window.onload = () => {
-            loadSong(currentSongIndex);
-            renderSongs();
-        }
+            fetchSongs();
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                toggleTheme();
+            }
+        };
+
+        audio.onended = () => {
+            isPlaying = false;
+            updatePlayBtn();
+            progressBar.style.width = "0%";
+        };
     </script>
 </body>
 </html>
